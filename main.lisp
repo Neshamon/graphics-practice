@@ -5,8 +5,13 @@
 (defclass main (trial:main)
   ())
 
+(setf +app-system+ "my-project")
+
 (defun launch (&rest args)
-  (apply #'trial:launch 'main args))
+  (let ((*package* #.*package*))
+    (load-keymap)
+    (setf (active-p (action-set 'in-game)) T)
+    (apply #'trial:launch 'main args)))
 
 (define-asset (trial cat) image
   #p"cat.png")
@@ -19,7 +24,8 @@
    (texture :initform (// 'trial 'cat))))
 
 (define-handler (my-cube tick) (tt)
-  (setf (orientation my-cube) (qfrom-angle +vy+ tt)))
+  (setf (orientation my-cube) (qfrom-angle +vy+ tt))
+  (let ((movement (directional 'move)))))
 
 (defmethod setup-scene ((main main) scene) 
   (enter (make-instance 'my-cube) scene)
